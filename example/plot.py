@@ -4,9 +4,9 @@ import matplotlib.pyplot as plt
 
 RESOLUTION = 20
 # Define the ranges for the input parameters
-TEMPERATURE_RANGE = np.linspace(10, 40, RESOLUTION)
-TEMPERATURE_CHANGE_RANGE = np.linspace(-5, 5, RESOLUTION)
-TEC_POWER_RANGE = np.linspace(0, 25, RESOLUTION)
+TEMPERATURE_RANGE = np.linspace(10, 45, RESOLUTION)
+TEMPERATURE_CHANGE_RANGE = np.linspace(-1, 1, RESOLUTION)
+TEC_POWER_RANGE = np.linspace(0, 45, RESOLUTION)
 FAN_RANGE = np.linspace(0, 100, RESOLUTION)
 
 # Create a figure with a 3D subplot
@@ -44,12 +44,12 @@ for i, temperature in enumerate(TEMPERATURE_RANGE):
 print("\nProgress: 100.00% - Completed")
 
 # Plot the results
-X, Y = np.meshgrid(TEMPERATURE_RANGE, TEC_POWER_RANGE)
+X, Y = np.meshgrid(TEC_POWER_RANGE, TEMPERATURE_RANGE)
 ax.plot_surface(X, Y, results, cmap='viridis', edgecolor='none')
 
 # Set the labels and title
-ax.set_xlabel('Temperature')
-ax.set_ylabel('TEC Power')
+ax.set_xlabel('TEC Power')
+ax.set_ylabel('Temperature')
 ax.set_zlabel('Fan Speed (%)')
 ax.set_title('Fan Speed vs Temperature and TEC Power')
 

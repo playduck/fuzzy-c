@@ -31,31 +31,74 @@
  * @param numRules The number of fuzzy rules in the array.
  */
 void fuzzyInference(const FuzzyRule *rules, int numRules) {
-    // Initialize the output memberships to 0 for each rule
+    // Initialize the output memberships of the consequent to 0
     for (int i = 0; i < numRules; i++) {
-        const FuzzyRule *rule = &rules[i];
-        rule->output->memberships[rule->outputIndex] = 0;
+        rules[i].consequent.variable->memberships[rules[i].consequent.value] =
+            0.0;
     }
 
     // Iterate over each rule
     for (int i = 0; i < numRules; i++) {
         const FuzzyRule *rule = &rules[i];
 
-        // Calculate the minimum membership of the inputs
-        double minMembership = 1.0;
+        // Calculate the membership of the inputs
+        double membership = 1.0;
+        double orMembership = 0.0;
+        bool isOrOperator = false;
 
-        for (int j = 0; j < rule->numInputs; j++) {
-            double membership =
-                rule->inputs[j]->memberships[rule->inputIndices[j]];
-            minMembership = minMembership * membership;
+        for (int j = 0; j < rule->num_antecedents; j++) {
+            printf("Processing antecedent %d of rule %d...\n", j, i);
+            FuzzyAntecedent *antecedent = &rule->antecedents[j];
+
+            if (j % 2 == 0) {
+                // This is a variable
+                printf("Variable: %p, value: %d\n",
+                       antecedent->variable.variable,
+                       antecedent->variable.value);
+                double inputMembership =
+                    antecedent->variable.variable
+                        ->memberships[antecedent->variable.value];
+
+                printf("Membership: %f\n", inputMembership);
+                if (isOrOperator) {
+                    orMembership = fmax(orMembership, inputMembership);
+                } else {
+                    membership = fmin(membership, inputMembership);
+                }
+            } else {
+                // This is an operator
+                printf("Operator: %d\n", antecedent->operator);
+                if (antecedent->operator== FUZZY_OR) {
+                    // Use OR operation
+                    isOrOperator = true;
+                } else {
+                    isOrOperator = false;
+                    if (orMembership > 0.0) {
+                        membership = fmax(membership, orMembership);
+                    }
+                    orMembership = 0.0;
+                }
+            }
         }
 
-        rule->output->memberships[rule->outputIndex] += minMembership;
+        // Apply the final membership to the output
+        if (orMembership > 0.0) {
+            membership = fmax(membership, orMembership);
+        }
+
+        // add the membership to the output
+        printf("Output variable: %p, value: %d\n", rule->consequent.variable,
+               rule->consequent.value);
+        rule->consequent.variable->memberships[rule->consequent.value] =
+            fmax(rule->consequent.variable->memberships[rule->consequent.value],
+                 membership);
+        printf("Membership: %f\n",
+               rule->consequent.variable->memberships[rule->consequent.value]);
     }
 
-    // Normalize the output memberships
+    // Normalize the output membership
     for (int i = 0; i < numRules; i++) {
-        const FuzzyRule *rule = &rules[i];
-        normalizeClass(rule->output);
+        printf("Normalizing rule %d...\n", i);
+        normalizeClass(rules[i].consequent.variable);
     }
 }
