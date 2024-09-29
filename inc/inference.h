@@ -13,6 +13,7 @@
 #define FUZZY_INFERENCE_H
 #pragma once
 
+#include "class.h"
 #include "classifier.h"
 #include "membership_function.h"
 

@@ -9,6 +9,7 @@
  *
  */
 
+#include "class.h"
 #include "classifier.h"
 #include "defuzzifier.h"
 #include "membership_function.h"

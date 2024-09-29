@@ -14,6 +14,7 @@
 #define FUZZY_DEFUZZIFIER_H
 #pragma once
 
+#include "class.h"
 #include "membership_function.h"
 
 double defuzzification(FuzzyClass* class, FuzzyClassifier* membershipFunctions);
