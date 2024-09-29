@@ -45,7 +45,7 @@ typedef struct {
     }
 #define AND {.operator= FUZZY_AND}
 #define OR {.operator= FUZZY_OR}
-#define ANTECEDENTS(...)                                                       \
+#define WHEN(...)                                                              \
     .antecedents = (FuzzyAntecedent[]){__VA_ARGS__},                           \
     .num_antecedents =                                                         \
         sizeof((FuzzyAntecedent[]){__VA_ARGS__}) / sizeof(FuzzyAntecedent)
@@ -54,7 +54,7 @@ typedef struct {
     .consequent = (FuzzyVariable) { .variable = _variable, .value = _value }
 
 // Define a macro to create a fuzzy rule
-#define IF(A, B) {A, B}
+#define PROPOSITION(antecedents, consequent) {antecedents, consequent}
 
 void fuzzyInference(const FuzzyRule *rules, int numRules);
 

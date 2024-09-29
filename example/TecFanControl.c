@@ -101,65 +101,65 @@ const MembershipFunction fanSpeedMembershipFunctions[] = {
 FuzzyRule rules[] = {
     // If fan state is "off" and hot-side temperature is "medium" or "high" or
     // TEC heat load is "high", then fan speed is "high"
-    IF(ANTECEDENTS(VAR(&FanState, FAN_STATE_OFF), AND,
-                   VAR(&TemperatureState, TEMPERATURE_MEDIUM), OR,
-                   VAR(&TemperatureState, TEMPERATURE_HIGH)),
-       THEN(&FanSpeed, FAN_SPEED_FAST)),
+    PROPOSITION(WHEN(VAR(&FanState, FAN_STATE_OFF), AND,
+                     VAR(&TemperatureState, TEMPERATURE_MEDIUM), OR,
+                     VAR(&TemperatureState, TEMPERATURE_HIGH)),
+                THEN(&FanSpeed, FAN_SPEED_FAST)),
 
-    IF(ANTECEDENTS(VAR(&FanState, FAN_STATE_OFF), AND,
-                   VAR(&TECPowerState, TEC_POWER_MEDIUM), OR,
-                   VAR(&TECPowerState, TEC_POWER_HIGH)),
-       THEN(&FanSpeed, FAN_SPEED_FAST)),
+    PROPOSITION(WHEN(VAR(&FanState, FAN_STATE_OFF), AND,
+                     VAR(&TECPowerState, TEC_POWER_MEDIUM), OR,
+                     VAR(&TECPowerState, TEC_POWER_HIGH)),
+                THEN(&FanSpeed, FAN_SPEED_FAST)),
     // if the fan is off and temperature is low and stable or decreasing then
     // keep the fan off
-    IF(ANTECEDENTS(VAR(&FanState, FAN_STATE_OFF), AND,
-                   VAR(&TemperatureState, TEMPERATURE_LOW), AND,
-                   VAR(&TempChangeState, TEMP_CHANGE_STABLE), OR,
-                   VAR(&TempChangeState, TEMP_CHANGE_DECREASING)),
-       THEN(&FanSpeed, FAN_SPEED_OFF)),
+    PROPOSITION(WHEN(VAR(&FanState, FAN_STATE_OFF), AND,
+                     VAR(&TemperatureState, TEMPERATURE_LOW), AND,
+                     VAR(&TempChangeState, TEMP_CHANGE_STABLE), OR,
+                     VAR(&TempChangeState, TEMP_CHANGE_DECREASING)),
+                THEN(&FanSpeed, FAN_SPEED_OFF)),
 
     // if the fan is on, and TEC power is "low", and temperature isn't low then
     // fan speed is low
-    IF(ANTECEDENTS(VAR(&FanState, FAN_STATE_ON), AND,
-                   VAR(&TECPowerState, TEC_POWER_LOW), AND,
-                   VAR(&TemperatureState, TEMPERATURE_MEDIUM)),
-       THEN(&FanSpeed, FAN_SPEED_SLOW)),
+    PROPOSITION(WHEN(VAR(&FanState, FAN_STATE_ON), AND,
+                     VAR(&TECPowerState, TEC_POWER_LOW), AND,
+                     VAR(&TemperatureState, TEMPERATURE_MEDIUM)),
+                THEN(&FanSpeed, FAN_SPEED_SLOW)),
 
     // if the fan is on, and TEC power is "low" and temperature is "low", then
     // fan is off
-    IF(ANTECEDENTS(VAR(&FanState, FAN_STATE_ON), AND,
-                   VAR(&TECPowerState, TEC_POWER_LOW), AND,
-                   VAR(&TemperatureState, TEMPERATURE_LOW)),
-       THEN(&FanSpeed, FAN_SPEED_OFF)),
+    PROPOSITION(WHEN(VAR(&FanState, FAN_STATE_ON), AND,
+                     VAR(&TECPowerState, TEC_POWER_LOW), AND,
+                     VAR(&TemperatureState, TEMPERATURE_LOW)),
+                THEN(&FanSpeed, FAN_SPEED_OFF)),
 
     // if the fan is on, and TEC power is "medium", then fan speed is medium
-    IF(ANTECEDENTS(VAR(&FanState, FAN_STATE_ON), AND,
-                   VAR(&TECPowerState, TEC_POWER_MEDIUM)),
-       THEN(&FanSpeed, FAN_SPEED_MEDIUM)),
+    PROPOSITION(WHEN(VAR(&FanState, FAN_STATE_ON), AND,
+                     VAR(&TECPowerState, TEC_POWER_MEDIUM)),
+                THEN(&FanSpeed, FAN_SPEED_MEDIUM)),
 
     // if the fan is on, and TEC power is "medium" and temperature is
     // decreasing, then fan speed is low
-    IF(ANTECEDENTS(VAR(&FanState, FAN_STATE_ON), AND,
-                   VAR(&TECPowerState, TEC_POWER_MEDIUM), AND,
-                   VAR(&TempChangeState, TEMP_CHANGE_DECREASING)),
-       THEN(&FanSpeed, FAN_SPEED_SLOW)),
+    PROPOSITION(WHEN(VAR(&FanState, FAN_STATE_ON), AND,
+                     VAR(&TECPowerState, TEC_POWER_MEDIUM), AND,
+                     VAR(&TempChangeState, TEMP_CHANGE_DECREASING)),
+                THEN(&FanSpeed, FAN_SPEED_SLOW)),
 
     // if the fan is on, and TEC power is "high", then fan speed is high
-    IF(ANTECEDENTS(VAR(&FanState, FAN_STATE_ON), AND,
-                   VAR(&TECPowerState, TEC_POWER_HIGH)),
-       THEN(&FanSpeed, FAN_SPEED_FAST)),
+    PROPOSITION(WHEN(VAR(&FanState, FAN_STATE_ON), AND,
+                     VAR(&TECPowerState, TEC_POWER_HIGH)),
+                THEN(&FanSpeed, FAN_SPEED_FAST)),
 
     // if the fan is on, and temperature is "high", then fan is medium
-    IF(ANTECEDENTS(VAR(&FanState, FAN_STATE_ON), AND,
-                   VAR(&TemperatureState, TEMPERATURE_HIGH)),
-       THEN(&FanSpeed, FAN_SPEED_MEDIUM)),
+    PROPOSITION(WHEN(VAR(&FanState, FAN_STATE_ON), AND,
+                     VAR(&TemperatureState, TEMPERATURE_HIGH)),
+                THEN(&FanSpeed, FAN_SPEED_MEDIUM)),
 
     // if the fan is on, and TEC power is "high" and temperature is "high", then
     // fan is high
-    IF(ANTECEDENTS(VAR(&FanState, FAN_STATE_ON), AND,
-                   VAR(&TemperatureState, TEMPERATURE_HIGH), AND,
-                   VAR(&TECPowerState, TEC_POWER_HIGH)),
-       THEN(&FanSpeed, FAN_SPEED_FAST)),
+    PROPOSITION(WHEN(VAR(&FanState, FAN_STATE_ON), AND,
+                     VAR(&TemperatureState, TEMPERATURE_HIGH), AND,
+                     VAR(&TECPowerState, TEC_POWER_HIGH)),
+                THEN(&FanSpeed, FAN_SPEED_FAST)),
 };
 
 void createClassifiers() {
