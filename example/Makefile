@@ -1,7 +1,7 @@
 CC=gcc
-CFLAGS=-Wall -Wextra -I../inc
+CFLAGS=-Wall -Wextra -I../inc -O3
 LDFLAGS=
-SOURCES=../src/membership_function.c ../src/classifier.c ../src/inference.c ../src/defuzzifier.c
+SOURCES=../src/membership_function.c ../src/class.c ../src/classifier.c ../src/inference.c ../src/defuzzifier.c
 OBJECTS=$(notdir $(SOURCES:.c=.o))
 EXECUTABLE=TecFanControl.out
 OUTPUT_DIR=out

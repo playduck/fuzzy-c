@@ -23,7 +23,9 @@
 */
 
 #include <stdio.h>
+
 #include "membership_function.h"
+#include "class.h"
 #include "classifier.h"
 #include "inference.h"
 #include "defuzzifier.h"
@@ -70,9 +72,9 @@ const MembershipFunction tempChangeInputMembershipFunctions[] = {
 #define TEC_POWER_HIGH 2
 const MembershipFunction TECPowerInputMembershipFunctions[] = {
     // in Watts
-    {-5.0, -5.0, 5.0, 12.0,  TRAPEZOIDAL}, // low TEC Power
-    {5.0, 12.0, 14.0, 18.0, TRAPEZOIDAL}, // medium TEC Power
-    {14.0, 18.0, 100.0, 100.0, TRAPEZOIDAL} // high Tec power
+    {-5.0, -5.0, 5.0, 10.0,  TRAPEZOIDAL}, // low TEC Power
+    {5.0, 10.0, 15.0, 22.0, TRAPEZOIDAL}, // medium TEC Power
+    {15.0, 22.0, 100.0, 100.0, TRAPEZOIDAL} // high Tec power
 };
 
 #define FAN_STATE_OFF 0
@@ -108,7 +110,7 @@ FuzzyRule rules[] = {
 
     // if the fan is on, and TEC power is "low", and temperature isn't low then fan speed is low
     CREATE_FUZZY_RULE_3(&FanState, FAN_STATE_ON, &TECPowerState, TEC_POWER_LOW, &TemperatureState, TEMPERATURE_MEDIUM, &FanSpeed, FAN_SPEED_MEDIUM),
-    CREATE_FUZZY_RULE_3(&FanState, FAN_STATE_ON, &TECPowerState, TEC_POWER_LOW, &TemperatureState, TEMPERATURE_HIGH, &FanSpeed, FAN_SPEED_FAST),
+    CREATE_FUZZY_RULE_3(&FanState, FAN_STATE_ON, &TECPowerState, TEC_POWER_LOW, &TemperatureState, TEMPERATURE_HIGH, &FanSpeed, FAN_SPEED_MEDIUM),
 
     // if the fan is on, and TEC power is "low" and temperature is "low", then fan is off
     CREATE_FUZZY_RULE_3(&FanState, FAN_STATE_ON, &TECPowerState, TEC_POWER_LOW, &TemperatureState, TEMPERATURE_LOW, &FanSpeed, FAN_SPEED_OFF),
@@ -119,10 +121,10 @@ FuzzyRule rules[] = {
     CREATE_FUZZY_RULE_3(&FanState, FAN_STATE_ON, &TECPowerState, TEC_POWER_MEDIUM, &TempChangeState, TEMP_CHANGE_DECREASING, &FanSpeed, FAN_SPEED_SLOW),
     // if the fan is on, and TEC power is "high", then fan speed is high
     CREATE_FUZZY_RULE_2(&FanState, FAN_STATE_ON, &TECPowerState, TEC_POWER_HIGH, &FanSpeed, FAN_SPEED_FAST),
-
-    // if fan is on and temperature is high, then fan is high
-    CREATE_FUZZY_RULE_2(&FanState, FAN_STATE_ON, &TECPowerState, TEC_POWER_HIGH, &FanSpeed, FAN_SPEED_FAST),
-    CREATE_FUZZY_RULE_2(&FanState, FAN_STATE_ON, &TemperatureState, TEMPERATURE_HIGH, &FanSpeed, FAN_SPEED_FAST),
+    // if the fan is on, and temperature is "high", then fan is medium
+    CREATE_FUZZY_RULE_2(&FanState, FAN_STATE_ON, &TemperatureState, TEMPERATURE_HIGH, &FanSpeed, FAN_SPEED_MEDIUM),
+    // if the fan is on, and TEC power is "high" and temperature is "high", then fan is high
+    CREATE_FUZZY_RULE_3(&FanState, FAN_STATE_ON, &TemperatureState, TEMPERATURE_HIGH, &TECPowerState, TEC_POWER_HIGH, &FanSpeed, FAN_SPEED_FAST),
 };
 
 void createClassifiers()   {
