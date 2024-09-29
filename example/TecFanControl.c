@@ -22,18 +22,18 @@
  *  limitations under the License.
 */
 
-#include <stdio.h>
-
-#include "membership_function.h"
 #include "class.h"
 #include "classifier.h"
-#include "inference.h"
 #include "defuzzifier.h"
+#include "inference.h"
+#include "membership_function.h"
 
-const char* lmhLabels[] = {"Low", "Medium", "High"};
-const char* changeLabels[] = {"Dec", "Stable", "Inc"};
-const char* fanLabels[] = {"Off", "On"};
-const char* fanSpeedLabels[] = {"Off", "Slow", "Medium", "Fast"};
+#include <stdio.h>
+
+const char *lmhLabels[] = {"Low", "Medium", "High"};
+const char *changeLabels[] = {"Dec", "Stable", "Inc"};
+const char *fanLabels[] = {"Off", "On"};
+const char *fanSpeedLabels[] = {"Off", "Slow", "Medium", "Fast"};
 
 FuzzyClassifier temperatureClassifier;
 FuzzyClass TemperatureState;
@@ -52,9 +52,9 @@ FuzzyClass FanSpeed;
 #define TEMPERATURE_HIGH 2
 const MembershipFunction temperatureInputMembershipFunctions[] = {
     // in degree C
-    {-20.0, -20.0, 18.0, 25.0,  TRAPEZOIDAL}, // temperature low
-    {18.0, 23.0, 35.0, 0.0, TRIANGULAR}, // temperature medium
-    {23.0, 35.0, 100.0, 100.0, TRAPEZOIDAL} // temperature high
+    {-20.0, -20.0, 18.0, 25.0, TRAPEZOIDAL}, // temperature low
+    {18.0, 23.0, 35.0, 0.0, TRIANGULAR},     // temperature medium
+    {23.0, 35.0, 100.0, 100.0, TRAPEZOIDAL}  // temperature high
 };
 
 #define TEMP_CHANGE_DECREASING 0
@@ -62,9 +62,9 @@ const MembershipFunction temperatureInputMembershipFunctions[] = {
 #define TEMP_CHANGE_INCREASING 2
 const MembershipFunction tempChangeInputMembershipFunctions[] = {
     // in degree C per second
-    {-20.0, -20.0, -2.0, 0.0,  TRAPEZOIDAL}, // temperature decreasing
-    {-2.0, 0.0, 2.0, 0.0, TRIANGULAR}, // temperature stable
-    {0.0, 2.0, 20.0, 20.0, TRAPEZOIDAL} // temperature increasing
+    {-20.0, -20.0, -2.0, 0.0, TRAPEZOIDAL}, // temperature decreasing
+    {-2.0, 0.0, 2.0, 0.0, TRIANGULAR},      // temperature stable
+    {0.0, 2.0, 20.0, 20.0, TRAPEZOIDAL}     // temperature increasing
 };
 
 #define TEC_POWER_LOW 0
@@ -72,8 +72,8 @@ const MembershipFunction tempChangeInputMembershipFunctions[] = {
 #define TEC_POWER_HIGH 2
 const MembershipFunction TECPowerInputMembershipFunctions[] = {
     // in Watts
-    {-5.0, -5.0, 5.0, 10.0,  TRAPEZOIDAL}, // low TEC Power
-    {5.0, 10.0, 15.0, 22.0, TRAPEZOIDAL}, // medium TEC Power
+    {-5.0, -5.0, 5.0, 10.0, TRAPEZOIDAL},   // low TEC Power
+    {5.0, 10.0, 15.0, 22.0, TRAPEZOIDAL},   // medium TEC Power
     {15.0, 22.0, 100.0, 100.0, TRAPEZOIDAL} // high Tec power
 };
 
@@ -81,7 +81,7 @@ const MembershipFunction TECPowerInputMembershipFunctions[] = {
 #define FAN_STATE_ON 1
 const MembershipFunction fanInputMembershipFunctions[] = {
     // in PWM duty cycle percent
-    {0.0, 20.0, 0.0, 0.0,  RECTANGULAR}, // fan off
+    {0.0, 20.0, 0.0, 0.0, RECTANGULAR},   // fan off
     {20.0, 101.0, 0.0, 0.0, RECTANGULAR}, // fan on
 };
 
@@ -91,52 +91,84 @@ const MembershipFunction fanInputMembershipFunctions[] = {
 #define FAN_SPEED_FAST 3
 const MembershipFunction fanSpeedMembershipFunctions[] = {
     // in PWM duty cycle percent
-    {-20.0, 20.0, 0.0, .0,  RECTANGULAR}, // fan off
-    {20.0, 20.0, 40.0, 50.0, TRAPEZOIDAL}, // fan low
-    {40.0, 50.0, 60.0, 70.0, TRAPEZOIDAL}, // fan medium
+    {-20.0, 20.0, 0.0, .0, RECTANGULAR},     // fan off
+    {20.0, 20.0, 40.0, 50.0, TRAPEZOIDAL},   // fan low
+    {40.0, 50.0, 60.0, 70.0, TRAPEZOIDAL},   // fan medium
     {60.0, 70.0, 100.0, 100.0, TRAPEZOIDAL}, // fan high
 };
 
 FuzzyRule rules[] = {
-    // If fan state is "off" and hot-side temperature is "medium" or "high" or TEC heat load is "high", then fan speed is "high"
-    CREATE_FUZZY_RULE_2(&FanState, FAN_STATE_OFF, &TemperatureState, TEMPERATURE_MEDIUM, &FanSpeed, FAN_SPEED_FAST),
-    CREATE_FUZZY_RULE_2(&FanState, FAN_STATE_OFF, &TemperatureState, TEMPERATURE_HIGH, &FanSpeed, FAN_SPEED_FAST),
-    CREATE_FUZZY_RULE_2(&FanState, FAN_STATE_OFF, &TECPowerState, TEC_POWER_MEDIUM, &FanSpeed, FAN_SPEED_FAST),
-    CREATE_FUZZY_RULE_2(&FanState, FAN_STATE_OFF, &TECPowerState, TEC_POWER_HIGH, &FanSpeed, FAN_SPEED_FAST),
+    // If fan state is "off" and hot-side temperature is "medium" or "high" or
+    // TEC heat load is "high", then fan speed is "high"
+    CREATE_FUZZY_RULE_2(&FanState, FAN_STATE_OFF, &TemperatureState,
+                        TEMPERATURE_MEDIUM, &FanSpeed, FAN_SPEED_FAST),
+    CREATE_FUZZY_RULE_2(&FanState, FAN_STATE_OFF, &TemperatureState,
+                        TEMPERATURE_HIGH, &FanSpeed, FAN_SPEED_FAST),
+    CREATE_FUZZY_RULE_2(&FanState, FAN_STATE_OFF, &TECPowerState,
+                        TEC_POWER_MEDIUM, &FanSpeed, FAN_SPEED_FAST),
+    CREATE_FUZZY_RULE_2(&FanState, FAN_STATE_OFF, &TECPowerState,
+                        TEC_POWER_HIGH, &FanSpeed, FAN_SPEED_FAST),
 
-    // if the fan is off and temperature is low and stable or decreasing then keep the fan off
-    CREATE_FUZZY_RULE_3(&FanState, FAN_STATE_OFF, &TemperatureState, TEMPERATURE_LOW, &TempChangeState, TEMP_CHANGE_STABLE, &FanSpeed, FAN_SPEED_OFF),
-    CREATE_FUZZY_RULE_3(&FanState, FAN_STATE_OFF, &TemperatureState, TEMPERATURE_LOW, &TempChangeState, TEMP_CHANGE_DECREASING, &FanSpeed, FAN_SPEED_OFF),
+    // if the fan is off and temperature is low and stable or decreasing then
+    // keep the fan off
+    CREATE_FUZZY_RULE_3(&FanState, FAN_STATE_OFF, &TemperatureState,
+                        TEMPERATURE_LOW, &TempChangeState, TEMP_CHANGE_STABLE,
+                        &FanSpeed, FAN_SPEED_OFF),
+    CREATE_FUZZY_RULE_3(&FanState, FAN_STATE_OFF, &TemperatureState,
+                        TEMPERATURE_LOW, &TempChangeState,
+                        TEMP_CHANGE_DECREASING, &FanSpeed, FAN_SPEED_OFF),
 
-    // if the fan is on, and TEC power is "low", and temperature isn't low then fan speed is low
-    CREATE_FUZZY_RULE_3(&FanState, FAN_STATE_ON, &TECPowerState, TEC_POWER_LOW, &TemperatureState, TEMPERATURE_MEDIUM, &FanSpeed, FAN_SPEED_MEDIUM),
-    CREATE_FUZZY_RULE_3(&FanState, FAN_STATE_ON, &TECPowerState, TEC_POWER_LOW, &TemperatureState, TEMPERATURE_HIGH, &FanSpeed, FAN_SPEED_MEDIUM),
+    // if the fan is on, and TEC power is "low", and temperature isn't low then
+    // fan speed is low
+    CREATE_FUZZY_RULE_3(&FanState, FAN_STATE_ON, &TECPowerState, TEC_POWER_LOW,
+                        &TemperatureState, TEMPERATURE_MEDIUM, &FanSpeed,
+                        FAN_SPEED_MEDIUM),
+    CREATE_FUZZY_RULE_3(&FanState, FAN_STATE_ON, &TECPowerState, TEC_POWER_LOW,
+                        &TemperatureState, TEMPERATURE_HIGH, &FanSpeed,
+                        FAN_SPEED_MEDIUM),
 
-    // if the fan is on, and TEC power is "low" and temperature is "low", then fan is off
-    CREATE_FUZZY_RULE_3(&FanState, FAN_STATE_ON, &TECPowerState, TEC_POWER_LOW, &TemperatureState, TEMPERATURE_LOW, &FanSpeed, FAN_SPEED_OFF),
+    // if the fan is on, and TEC power is "low" and temperature is "low", then
+    // fan is off
+    CREATE_FUZZY_RULE_3(&FanState, FAN_STATE_ON, &TECPowerState, TEC_POWER_LOW,
+                        &TemperatureState, TEMPERATURE_LOW, &FanSpeed,
+                        FAN_SPEED_OFF),
 
     // if the fan is on, and TEC power is "medium", then fan speed is medium
-    CREATE_FUZZY_RULE_2(&FanState, FAN_STATE_ON, &TECPowerState, TEC_POWER_MEDIUM, &FanSpeed, FAN_SPEED_MEDIUM),
-    // if the fan is on, and TEC power is "medium" and temperature is decreasing, then fan speed is low
-    CREATE_FUZZY_RULE_3(&FanState, FAN_STATE_ON, &TECPowerState, TEC_POWER_MEDIUM, &TempChangeState, TEMP_CHANGE_DECREASING, &FanSpeed, FAN_SPEED_SLOW),
+    CREATE_FUZZY_RULE_2(&FanState, FAN_STATE_ON, &TECPowerState,
+                        TEC_POWER_MEDIUM, &FanSpeed, FAN_SPEED_MEDIUM),
+    // if the fan is on, and TEC power is "medium" and temperature is
+    // decreasing, then fan speed is low
+    CREATE_FUZZY_RULE_3(&FanState, FAN_STATE_ON, &TECPowerState,
+                        TEC_POWER_MEDIUM, &TempChangeState,
+                        TEMP_CHANGE_DECREASING, &FanSpeed, FAN_SPEED_SLOW),
     // if the fan is on, and TEC power is "high", then fan speed is high
-    CREATE_FUZZY_RULE_2(&FanState, FAN_STATE_ON, &TECPowerState, TEC_POWER_HIGH, &FanSpeed, FAN_SPEED_FAST),
+    CREATE_FUZZY_RULE_2(&FanState, FAN_STATE_ON, &TECPowerState, TEC_POWER_HIGH,
+                        &FanSpeed, FAN_SPEED_FAST),
     // if the fan is on, and temperature is "high", then fan is medium
-    CREATE_FUZZY_RULE_2(&FanState, FAN_STATE_ON, &TemperatureState, TEMPERATURE_HIGH, &FanSpeed, FAN_SPEED_MEDIUM),
-    // if the fan is on, and TEC power is "high" and temperature is "high", then fan is high
-    CREATE_FUZZY_RULE_3(&FanState, FAN_STATE_ON, &TemperatureState, TEMPERATURE_HIGH, &TECPowerState, TEC_POWER_HIGH, &FanSpeed, FAN_SPEED_FAST),
+    CREATE_FUZZY_RULE_2(&FanState, FAN_STATE_ON, &TemperatureState,
+                        TEMPERATURE_HIGH, &FanSpeed, FAN_SPEED_MEDIUM),
+    // if the fan is on, and TEC power is "high" and temperature is "high", then
+    // fan is high
+    CREATE_FUZZY_RULE_3(&FanState, FAN_STATE_ON, &TemperatureState,
+                        TEMPERATURE_HIGH, &TECPowerState, TEC_POWER_HIGH,
+                        &FanSpeed, FAN_SPEED_FAST),
 };
 
-void createClassifiers()   {
+void createClassifiers() {
     // initilize the input classifiers
-    initClassifier(&temperatureClassifier, &TemperatureState, temperatureInputMembershipFunctions, 3);
-    initClassifier(&tempChangeClassifier, &TempChangeState, tempChangeInputMembershipFunctions, 3);
-    initClassifier(&TECPowerClassifier, &TECPowerState, TECPowerInputMembershipFunctions, 3);
-    initClassifier(&FanStateClassifier, &FanState, fanInputMembershipFunctions, 2);
-    initClassifier(&fanSpeedClassifier, &FanSpeed, fanSpeedMembershipFunctions, 4);
+    initClassifier(&temperatureClassifier, &TemperatureState,
+                   temperatureInputMembershipFunctions, 3);
+    initClassifier(&tempChangeClassifier, &TempChangeState,
+                   tempChangeInputMembershipFunctions, 3);
+    initClassifier(&TECPowerClassifier, &TECPowerState,
+                   TECPowerInputMembershipFunctions, 3);
+    initClassifier(&FanStateClassifier, &FanState, fanInputMembershipFunctions,
+                   2);
+    initClassifier(&fanSpeedClassifier, &FanSpeed, fanSpeedMembershipFunctions,
+                   4);
 }
 
-void destroyClassifiers()   {
+void destroyClassifiers() {
     // free the classifiers
     fuzzyClassifierFree(&temperatureClassifier);
     FuzzyClassFree(&TemperatureState);
@@ -150,7 +182,8 @@ void destroyClassifiers()   {
     FuzzyClassFree(&FanSpeed);
 }
 
-double map_range(double value, double in_min, double in_max, double out_min, double out_max) {
+double map_range(double value, double in_min, double in_max, double out_min,
+                 double out_max) {
     // linear map helper function
     return (value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
@@ -158,7 +191,9 @@ double map_range(double value, double in_min, double in_max, double out_min, dou
 int main(int argc, char *argv[]) {
     // Check if the correct number of command line arguments are provided
     if (argc != 5) {
-        printf("Usage: %s <currentTemperature> <currentTemperatureChange> <currentTECPower> <currentFan>\n", argv[0]);
+        printf("Usage: %s <currentTemperature> <currentTemperatureChange> "
+               "<currentTECPower> <currentFan>\n",
+               argv[0]);
         return 1;
     }
 
@@ -172,8 +207,10 @@ int main(int argc, char *argv[]) {
     createClassifiers();
 
     // Classify the inputs
-    fuzzyClassifier(currentTemperature, &temperatureClassifier, &TemperatureState);
-    fuzzyClassifier(currentTemperatureChange, &tempChangeClassifier, &TempChangeState);
+    fuzzyClassifier(currentTemperature, &temperatureClassifier,
+                    &TemperatureState);
+    fuzzyClassifier(currentTemperatureChange, &tempChangeClassifier,
+                    &TempChangeState);
     fuzzyClassifier(currentTECPower, &TECPowerClassifier, &TECPowerState);
     fuzzyClassifier(currentFan, &FanStateClassifier, &FanState);
 
@@ -200,7 +237,7 @@ int main(int argc, char *argv[]) {
     fanSpeed = map_range(fanSpeed, 10.0, 80.0, 0.0, 100.0),
 
     // Print the result
-    printf("Fan Speed: %.04f %%\n", fanSpeed);
+        printf("Fan Speed: %.04f %%\n", fanSpeed);
 
     // Cleanup memory
     destroyClassifiers();

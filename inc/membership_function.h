@@ -9,16 +9,11 @@
  *
  */
 
-
 #ifndef FUZZY_MEMBERSHIP_FUNCTION_H
 #define FUZZY_MEMBERSHIP_FUNCTION_H
 #pragma once
 
-typedef enum {
-    TRIANGULAR,
-    TRAPEZOIDAL,
-    RECTANGULAR
-} MembershipFunctionType;
+typedef enum { TRIANGULAR, TRAPEZOIDAL, RECTANGULAR } MembershipFunctionType;
 
 typedef struct {
     double a;

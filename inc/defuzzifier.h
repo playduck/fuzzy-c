@@ -9,14 +9,14 @@
  *
  */
 
-
 #ifndef FUZZY_DEFUZZIFIER_H
 #define FUZZY_DEFUZZIFIER_H
 #pragma once
 
 #include "class.h"
+#include "classifier.h"
 #include "membership_function.h"
 
-double defuzzification(FuzzyClass* class, FuzzyClassifier* membershipFunctions);
+double defuzzification(FuzzyClass *class, FuzzyClassifier *membershipFunctions);
 
 #endif

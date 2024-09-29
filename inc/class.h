@@ -16,12 +16,12 @@
 #include <stdint.h>
 
 typedef struct {
-    double* memberships;
+    double *memberships;
     uint8_t length;
 } FuzzyClass;
 
-void FuzzyClassInit(FuzzyClass* output, uint8_t length);
-void FuzzyClassFree(FuzzyClass* output);
-void normalizeClass(FuzzyClass* class);
+void FuzzyClassInit(FuzzyClass *output, uint8_t length);
+void FuzzyClassFree(FuzzyClass *output);
+void normalizeClass(FuzzyClass *class);
 
 #endif

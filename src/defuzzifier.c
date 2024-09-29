@@ -9,19 +9,22 @@
  *
  */
 
+#include "defuzzifier.h"
+
 #include "class.h"
 #include "classifier.h"
-#include "defuzzifier.h"
 #include "membership_function.h"
 
 /**
  * Calculate the centroid of a triangular membership function.
  *
- * @param function The triangular membership function to calculate the centroid for.
+ * @param function The triangular membership function to calculate the centroid
+ * for.
  * @param membership The membership value of the function.
  * @return The centroid of the triangular membership function.
  */
-double calculateTriangularCentroid(MembershipFunction function, double membership) {
+double calculateTriangularCentroid(MembershipFunction function,
+                                   double membership) {
     double a = function.a;
     double b = function.b;
     double c = function.c;
@@ -45,11 +48,13 @@ double calculateTriangularCentroid(MembershipFunction function, double membershi
 /**
  * Calculate the centroid of a trapezoidal membership function.
  *
- * @param function The trapezoidal membership function to calculate the centroid for.
+ * @param function The trapezoidal membership function to calculate the
+ * centroid for.
  * @param membership The membership value of the function.
  * @return The centroid of the trapezoidal membership function.
  */
-double calculateTrapezoidalCentroid(MembershipFunction function, double membership) {
+double calculateTrapezoidalCentroid(MembershipFunction function,
+                                    double membership) {
     double a = function.a;
     double b = function.b;
     double c = function.c;
@@ -70,11 +75,13 @@ double calculateTrapezoidalCentroid(MembershipFunction function, double membersh
 /**
  * Calculate the centroid of a rectangular membership function.
  *
- * @param function The rectangular membership function to calculate the centroid for.
+ * @param function The rectangular membership function to calculate the
+ * centroid for.
  * @param membership The membership value of the function.
  * @return The centroid of the rectangular membership function.
  */
-double calculateRectangularCentroid(MembershipFunction function, double membership) {
+double calculateRectangularCentroid(MembershipFunction function,
+                                    double membership) {
     double a = function.a;
     double b = function.b;
 
@@ -86,8 +93,6 @@ double calculateRectangularCentroid(MembershipFunction function, double membersh
     return centroid;
 }
 
-
-
 /**
  * Calculate the centroid of a membership function.
  *
@@ -97,15 +102,15 @@ double calculateRectangularCentroid(MembershipFunction function, double membersh
  */
 double calculateCentroid(MembershipFunction function, double membership) {
     switch (function.type) {
-        case TRIANGULAR:
-            return calculateTriangularCentroid(function, membership);
-        case TRAPEZOIDAL:
-            return calculateTrapezoidalCentroid(function, membership);
-        case RECTANGULAR:
-            return calculateRectangularCentroid(function, membership);
-        default:
-            // Handle unknown membership function type
-            return 0.0;
+    case TRIANGULAR:
+        return calculateTriangularCentroid(function, membership);
+    case TRAPEZOIDAL:
+        return calculateTrapezoidalCentroid(function, membership);
+    case RECTANGULAR:
+        return calculateRectangularCentroid(function, membership);
+    default:
+        // Handle unknown membership function type
+        return 0.0;
     }
 }
 
@@ -116,13 +121,15 @@ double calculateCentroid(MembershipFunction function, double membership) {
  * @param membershipFunctions The membership functions for the fuzzy class.
  * @return The centroid of the fuzzy class.
  */
-double defuzzification(FuzzyClass* class, FuzzyClassifier* membershipFunctions) {
+double defuzzification(FuzzyClass *class,
+                       FuzzyClassifier *membershipFunctions) {
     double sum = 0.0;
     double sumOfMemberships = 0.0;
 
     for (uint8_t i = 0; i < class->length; i++) {
         double membership = class->memberships[i];
-        double x = calculateCentroid(membershipFunctions->inputs[i], membership);
+        double x =
+            calculateCentroid(membershipFunctions->inputs[i], membership);
         sum += x * membership;
         sumOfMemberships += membership;
     }
