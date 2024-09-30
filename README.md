@@ -1,5 +1,9 @@
 <p align="center">
-    <img src="./assets/SVG/Logo.svg" width="500" alt="Fuzzy C Logo"/>
+    <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="./assets/SVG/Dark-Logo.svg">
+        <source media="(prefers-color-scheme: light)" srcset="./assets/SVG/Bright-Logo.svg">
+        <img alt="Fuzzy C Logoo" width="500" src="./assets/SVG/Bright-Logo.svg">
+    </picture>
 </p>
 
 # Fuzzy Logic in C
