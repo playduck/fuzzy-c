@@ -22,30 +22,25 @@
  *  limitations under the License.
 */
 
-#include "class.h"
-#include "classifier.h"
-#include "defuzzifier.h"
-#include "inference.h"
-#include "membership_function.h"
+#include "fuzzyc.h"
 
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 const char *lmhLabels[] = {"Low", "Medium", "High"};
 const char *changeLabels[] = {"Dec", "Stable", "Inc"};
 const char *fanLabels[] = {"Off", "On"};
 const char *fanSpeedLabels[] = {"Off", "Slow", "Medium", "Fast"};
 
-FuzzyClassifier temperatureClassifier;
-FuzzyClass TemperatureState;
-FuzzyClassifier tempChangeClassifier;
-FuzzyClass TempChangeState;
-FuzzyClassifier TECPowerClassifier;
-FuzzyClass TECPowerState;
-FuzzyClassifier FanStateClassifier;
-FuzzyClass FanState;
-FuzzyClassifier fanSpeedClassifier;
-FuzzyClass FanSpeed;
+// inputs
+FuzzySet TemperatureState;
+FuzzySet TempChangeState;
+FuzzySet TECPowerState;
+FuzzySet FanState;
+
+// output
+FuzzySet FanSpeed;
 
 // Define the membership functions
 #define TEMPERATURE_LOW 0
@@ -148,30 +143,25 @@ FuzzyRule rules[] = {
 
 void createClassifiers() {
     // initilize the input classifiers
-    initClassifier(&temperatureClassifier, &TemperatureState,
-                   temperatureInputMembershipFunctions, 3);
-    initClassifier(&tempChangeClassifier, &TempChangeState,
-                   tempChangeInputMembershipFunctions, 3);
-    initClassifier(&TECPowerClassifier, &TECPowerState,
-                   TECPowerInputMembershipFunctions, 3);
-    initClassifier(&FanStateClassifier, &FanState, fanInputMembershipFunctions,
-                   2);
-    initClassifier(&fanSpeedClassifier, &FanSpeed, fanSpeedMembershipFunctions,
-                   4);
+    FuzzySetInit(&TemperatureState, temperatureInputMembershipFunctions,
+                 FUZZY_LENGTH(temperatureInputMembershipFunctions));
+    FuzzySetInit(&TempChangeState, tempChangeInputMembershipFunctions,
+                 FUZZY_LENGTH(tempChangeInputMembershipFunctions));
+    FuzzySetInit(&TECPowerState, TECPowerInputMembershipFunctions,
+                 FUZZY_LENGTH(TECPowerInputMembershipFunctions));
+    FuzzySetInit(&FanState, fanInputMembershipFunctions,
+                 FUZZY_LENGTH(fanInputMembershipFunctions));
+    FuzzySetInit(&FanSpeed, fanSpeedMembershipFunctions,
+                 FUZZY_LENGTH(fanSpeedMembershipFunctions));
 }
 
 void destroyClassifiers() {
     // free the classifiers
-    fuzzyClassifierFree(&temperatureClassifier);
-    FuzzyClassFree(&TemperatureState);
-    fuzzyClassifierFree(&tempChangeClassifier);
-    FuzzyClassFree(&TempChangeState);
-    fuzzyClassifierFree(&TECPowerClassifier);
-    FuzzyClassFree(&TECPowerState);
-    fuzzyClassifierFree(&FanStateClassifier);
-    FuzzyClassFree(&FanState);
-    fuzzyClassifierFree(&fanSpeedClassifier);
-    FuzzyClassFree(&FanSpeed);
+    FuzzySetFree(&TemperatureState);
+    FuzzySetFree(&TempChangeState);
+    FuzzySetFree(&TECPowerState);
+    FuzzySetFree(&FanState);
+    FuzzySetFree(&FanSpeed);
 }
 
 double map_range(double value, double in_min, double in_max, double out_min,
@@ -202,12 +192,10 @@ int main(int argc, char *argv[]) {
     createClassifiers();
 
     // Classify the inputs
-    fuzzyClassifier(currentTemperature, &temperatureClassifier,
-                    &TemperatureState);
-    fuzzyClassifier(currentTemperatureChange, &tempChangeClassifier,
-                    &TempChangeState);
-    fuzzyClassifier(currentTECPower, &TECPowerClassifier, &TECPowerState);
-    fuzzyClassifier(currentFan, &FanStateClassifier, &FanState);
+    FuzzyClassifier(currentTemperature, &TemperatureState);
+    FuzzyClassifier(currentTemperatureChange, &TempChangeState);
+    FuzzyClassifier(currentTECPower, &TECPowerState);
+    FuzzyClassifier(currentFan, &FanState);
 
     // Print the input class memberships
     printf("Temperature %.04f degC\n", currentTemperature);
@@ -227,7 +215,7 @@ int main(int argc, char *argv[]) {
     printClassifier(&FanSpeed, fanSpeedLabels);
 
     // Defuzzify the output
-    double fanSpeed = defuzzification(&FanSpeed, &fanSpeedClassifier);
+    double fanSpeed = defuzzification(&FanSpeed);
     if (fanSpeed <= 20.0) {
         // fan won't run below 20, so it's effectively off
         fanSpeed = 0.0;

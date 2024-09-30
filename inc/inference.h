@@ -21,7 +21,7 @@
 
 // Define a type for a fuzzy variable
 typedef struct {
-    FuzzyClass *variable;
+    FuzzySet *variable;
     int value;
     bool invert;
 } FuzzyVariable;

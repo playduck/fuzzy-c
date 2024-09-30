@@ -117,19 +117,16 @@ double calculateCentroid(MembershipFunction function, double membership) {
 /**
  * Calculate the centroid of a fuzzy class.
  *
- * @param class The fuzzy class to calculate the centroid for.
- * @param membershipFunctions The membership functions for the fuzzy class.
+ * @param set The FuzzzySet to calculate the centroid for.
  * @return The centroid of the fuzzy class.
  */
-double defuzzification(FuzzyClass *class,
-                       FuzzyClassifier *membershipFunctions) {
+double defuzzification(FuzzySet *set) {
     double sum = 0.0;
     double sumOfMemberships = 0.0;
 
-    for (uint8_t i = 0; i < class->length; i++) {
-        double membership = class->memberships[i];
-        double x =
-            calculateCentroid(membershipFunctions->inputs[i], membership);
+    for (int i = 0; i < set->length; i++) {
+        double membership = set->membershipValues[i];
+        double x = calculateCentroid(set->membershipFunctions[i], membership);
         sum += x * membership;
         sumOfMemberships += membership;
     }

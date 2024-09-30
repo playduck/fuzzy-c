@@ -13,15 +13,20 @@
 #define FUZZY_CLASS_H
 #pragma once
 
-#include <stdint.h>
+#include "membership_function.h"
 
 typedef struct {
-    double *memberships;
-    uint8_t length;
-} FuzzyClass;
+    double *membershipValues;
+    MembershipFunction *membershipFunctions;
+    int length;
+} FuzzySet;
 
-void FuzzyClassInit(FuzzyClass *output, uint8_t length);
-void FuzzyClassFree(FuzzyClass *output);
-void normalizeClass(FuzzyClass *class);
+void FuzzySetInit(FuzzySet *set, const MembershipFunction *membershipFunctions,
+                  int length);
+void FuzzySetFree(FuzzySet *set);
+
+void normalizeClass(FuzzySet *set);
+
+void printClassifier(FuzzySet *set, const char **labels);
 
 #endif

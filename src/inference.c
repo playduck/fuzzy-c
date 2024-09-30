@@ -33,7 +33,8 @@
 void fuzzyInference(const FuzzyRule *rules, int numRules) {
     // Initialize the output memberships of the consequent to 0
     for (int i = 0; i < numRules; i++) {
-        rules[i].consequent.variable->memberships[rules[i].consequent.value] =
+        rules[i]
+            .consequent.variable->membershipValues[rules[i].consequent.value] =
             0.0;
     }
 
@@ -65,16 +66,14 @@ void fuzzyInference(const FuzzyRule *rules, int numRules) {
                         // variable
                         inputMembership =
                             1.0 -
-                            antecedent->variables[k]
-                                .variable
-                                ->memberships[antecedent->variables[k].value];
+                            antecedent->variables[k].variable->membershipValues
+                                [antecedent->variables[k].value];
                     } else {
                         // If the variable is not inverted, calculate the
                         // membership as usual
                         inputMembership =
-                            antecedent->variables[k]
-                                .variable
-                                ->memberships[antecedent->variables[k].value];
+                            antecedent->variables[k].variable->membershipValues
+                                [antecedent->variables[k].value];
                     }
 
                     // Update the maximum membership of the variables in the
@@ -101,16 +100,14 @@ void fuzzyInference(const FuzzyRule *rules, int numRules) {
                         // variable
                         inputMembership =
                             1.0 -
-                            antecedent->variables[k]
-                                .variable
-                                ->memberships[antecedent->variables[k].value];
+                            antecedent->variables[k].variable->membershipValues
+                                [antecedent->variables[k].value];
                     } else {
                         // If the variable is not inverted, calculate the
                         // membership as usual
                         inputMembership =
-                            antecedent->variables[k]
-                                .variable
-                                ->memberships[antecedent->variables[k].value];
+                            antecedent->variables[k].variable->membershipValues
+                                [antecedent->variables[k].value];
                     }
 
                     // Update the minimum membership of the variables in the
@@ -126,10 +123,11 @@ void fuzzyInference(const FuzzyRule *rules, int numRules) {
 
         // Update the output membership with the maximum of the current
         // membership and the calculated membership
-        rules[i].consequent.variable->memberships[rules[i].consequent.value] =
+        rules[i]
+            .consequent.variable->membershipValues[rules[i].consequent.value] =
             fmax(rules[i]
                      .consequent.variable
-                     ->memberships[rules[i].consequent.value],
+                     ->membershipValues[rules[i].consequent.value],
                  membership);
     }
 
