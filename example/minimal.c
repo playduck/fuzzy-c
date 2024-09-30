@@ -27,70 +27,75 @@
 #include <stdlib.h>
 #include <time.h>
 
-// Define the states and classifiers
+// Define the fuzzy sets for the input and output
 FuzzySet Input;
 FuzzySet Output;
 
-// define labels for printing
+// Define labels for printing the fuzzy sets (only for debugging)
 const char *labels[] = {"Low", "Mid", "High"};
 
-// define membership functions
+// Define the membership functions for the input fuzzy set
 #define InputMembershipFunctions(X)                                            \
     X(INPUT_LOW, 0.0, 0.0, 15.0, 40.0, TRAPEZOIDAL)                            \
     X(INPUT_MEDIUM, 15.0, 40.0, 60.0, 80.0, TRAPEZOIDAL)                       \
     X(INPUT_HIGH, 60.0, 80.0, 100.0, 100.0, TRAPEZOIDAL)
 DEFINE_FUZZY_MEMBERSHIP(InputMembershipFunctions)
 
+// Define the membership functions for the output fuzzy set
 #define OutputMembershipFunctions(X)                                           \
     X(OUTPUT_LOW, 00.0, 0.0, 30.0, 50.0, TRAPEZOIDAL)                          \
     X(OUTPUT_MEDIUM, 30.0, 50.0, 70.0, 0.0, TRIANGULAR)                        \
     X(OUTPUT_HIGH, 50.0, 70.0, 100.0, 100.0, TRAPEZOIDAL)
 DEFINE_FUZZY_MEMBERSHIP(OutputMembershipFunctions)
 
+// Define the fuzzy rules
 FuzzyRule rules[] = {
-    // if input is low then output is high
+    // If the input is low, then the output is high
     PROPOSITION(WHEN(ALL_OF(VAR(Input, INPUT_LOW))), THEN(Output, OUTPUT_HIGH)),
 
-    // if input is not low then output is low
+    // If the input is not low, then the output is low
     PROPOSITION(WHEN(ALL_OF(NOT(Input, INPUT_LOW))), THEN(Output, OUTPUT_LOW)),
 };
 
 int main(int argc, char *argv[]) {
     double input_x;
 
-    // get an input value from args, or use a random value
+    // Get an input value from the command line arguments, or use a random value
     if (argc <= 1) {
+        // Seed the random number generator
         srand(time(NULL));
-        // random value between 0..100
+        // Generate a random value between 0 and 100
         input_x = (rand() % 10000) / 100.0;
         printf("Usage: %s <value>\n", argv[0]);
     } else {
+        // Convert the command line argument to a double
         input_x = atof(argv[1]);
     }
 
-    // instantiate classifiers
+    // Initialize the fuzzy sets
     FuzzySetInit(&Input, InputMembershipFunctions,
                  FUZZY_LENGTH(InputMembershipFunctions));
     FuzzySetInit(&Output, OutputMembershipFunctions,
                  FUZZY_LENGTH(OutputMembershipFunctions));
 
-    // classifiy the input into a fuzzy state
+    // Classify the input into a fuzzy state
     FuzzyClassifier(input_x, &Input);
 
-    // print the fuzzified input
+    // Print the fuzzified input
     printf("Input %.04f:\n", input_x);
     printClassifier(&Input, labels);
 
-    // run inference
+    // Run the fuzzy inference
     fuzzyInference(rules, FUZZY_LENGTH(rules));
 
     // Defuzzify the output
     double output_y = defuzzification(&Output);
 
-    // print the output
+    // Print the output
     printf("Output %.04f:\n", output_y);
     printClassifier(&Output, labels);
 
+    // Free the fuzzy sets
     FuzzySetFree(&Input);
     FuzzySetFree(&Output);
 
