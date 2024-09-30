@@ -1,4 +1,8 @@
-# Fuzzy C
+<p align="center">
+    <img src="./assets/SVG/Logo.svg" width="500" alt="Fuzzy C Logo"/>
+</p>
+
+# Fuzzy Logic in C
 
 A [fuzzy logic](https://en.wikipedia.org/wiki/Fuzzy_logic) Mamdani-like implementation in C.
 This code implements the classification of crisp values to fuzzy sets and provides a basic inference engine based off of pre-defined rules.
@@ -7,7 +11,7 @@ Sets can then be de-fuzzified back to a crisp value.
 Currently, Triangles, Trapezoids and Rectangular membership functions are supported.
 Deffuzification is done using centroids.
 
-# features
+## features
 
 - Easy to get started
 - extendable Membership Function States
@@ -30,9 +34,9 @@ Find working examples in the `./example` directory:
 ```bash
 cd example
 make all
-# then run
+#then run
 ./out/minimal
-# and
+#and
 ./out/TecFanController
 ```
 ```
@@ -47,7 +51,7 @@ pip install -r requirements.txt
 python ./plot.py
 ```
 > [!NOTE] This does not represent the entire controller due to its non-linear behavior. To fully represent this model you need a five-dimensional vector space.
-![./example/controller.figure.png](./example/controller-figure.png)
+![./assets/controller-figure.png](./assets/controller-figure.png)
 
 ## legal
 
