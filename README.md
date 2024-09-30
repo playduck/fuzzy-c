@@ -23,6 +23,14 @@ Deffuzification is done using centroids.
 - Semantic natural language-like syntax for rule definitions
 
 ```C
+// define membership functions
+#define InputMembershipFunctions(X)                                            \
+    X(INPUT_LOW, 0.0, 0.0, 15.0, 40.0, TRAPEZOIDAL)                            \
+    X(INPUT_MEDIUM, 15.0, 40.0, 60.0, 80.0, TRAPEZOIDAL)                       \
+    X(INPUT_HIGH, 60.0, 80.0, 100.0, 100.0, TRAPEZOIDAL)
+DEFINE_FUZZY_MEMBERSHIP(InputMembershipFunctions)
+
+// define the system rules
 FuzzyRule rules[] = {
     // if input is low then output is high
     PROPOSITION(WHEN(ALL_OF(VAR(Input, INPUT_LOW))), THEN(Output, OUTPUT_HIGH)),

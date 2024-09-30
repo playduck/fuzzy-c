@@ -34,24 +34,18 @@ FuzzySet Output;
 // define labels for printing
 const char *labels[] = {"Low", "Mid", "High"};
 
-// Define the membership functions
-#define INPUT_LOW 0
-#define INPUT_MEDIUM 1
-#define INPUT_HIGH 2
-const MembershipFunction InputMembershipFunctions[] = {
-    {0.0, 0.0, 15.0, 40.0, TRAPEZOIDAL},    // input low
-    {15.0, 40.0, 60.0, 80.0, TRAPEZOIDAL},  // input medium
-    {60.0, 80.0, 100.0, 100.0, TRAPEZOIDAL} // input high
-};
+// define membership functions
+#define InputMembershipFunctions(X)                                            \
+    X(INPUT_LOW, 0.0, 0.0, 15.0, 40.0, TRAPEZOIDAL)                            \
+    X(INPUT_MEDIUM, 15.0, 40.0, 60.0, 80.0, TRAPEZOIDAL)                       \
+    X(INPUT_HIGH, 60.0, 80.0, 100.0, 100.0, TRAPEZOIDAL)
+DEFINE_FUZZY_MEMBERSHIP(InputMembershipFunctions)
 
-#define OUTPUT_LOW 0
-#define OUTPUT_MEDIUM 1
-#define OUTPUT_HIGH 2
-const MembershipFunction OutputMembershipFunctions[] = {
-    {0.0, 0.0, 30.0, 50.0, TRAPEZOIDAL},    // output low
-    {30.0, 50.0, 70.0, 0.0, TRIANGULAR},    // output medium
-    {50.0, 70.0, 100.0, 100.0, TRAPEZOIDAL} // output high
-};
+#define OutputMembershipFunctions(X)                                           \
+    X(OUTPUT_LOW, 00.0, 0.0, 30.0, 50.0, TRAPEZOIDAL)                          \
+    X(OUTPUT_MEDIUM, 30.0, 50.0, 70.0, 0.0, TRIANGULAR)                        \
+    X(OUTPUT_HIGH, 50.0, 70.0, 100.0, 100.0, TRAPEZOIDAL)
+DEFINE_FUZZY_MEMBERSHIP(OutputMembershipFunctions)
 
 FuzzyRule rules[] = {
     // if input is low then output is high

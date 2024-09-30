@@ -23,6 +23,13 @@ typedef struct {
     MembershipFunctionType type;
 } MembershipFunction;
 
+#define FUZZY_LABEL(a, ...) a,
+#define FUZZY_VALUE(a, ...) {__VA_ARGS__},
+
+#define DEFINE_FUZZY_MEMBERSHIP(name)                                          \
+    enum { name(FUZZY_LABEL) };                                                \
+    MembershipFunction name[] = {name(FUZZY_VALUE)};
+
 double membershipFunction(double x, MembershipFunction mf);
 
 #endif

@@ -42,56 +42,36 @@ FuzzySet FanState;
 // output
 FuzzySet FanSpeed;
 
-// Define the membership functions
-#define TEMPERATURE_LOW 0
-#define TEMPERATURE_MEDIUM 1
-#define TEMPERATURE_HIGH 2
-const MembershipFunction temperatureInputMembershipFunctions[] = {
-    // in degree C
-    {-20.0, -20.0, 18.0, 25.0, TRAPEZOIDAL}, // temperature low
-    {18.0, 23.0, 35.0, 0.0, TRIANGULAR},     // temperature medium
-    {23.0, 35.0, 100.0, 100.0, TRAPEZOIDAL}  // temperature high
-};
+// define membership functions
+#define TemperatureMembershipFunctions(X)                                      \
+    X(TEMPERATURE_LOW, -20.0, -20.0, 18.0, 25.0, TRAPEZOIDAL)                  \
+    X(TEMPERATURE_MEDIUM, 18.0, 23.0, 35.0, 0.0, TRIANGULAR)                   \
+    X(TEMPERATURE_HIGH, 23.0, 35.0, 100.0, 100.0, TRAPEZOIDAL)
+DEFINE_FUZZY_MEMBERSHIP(TemperatureMembershipFunctions)
 
-#define TEMP_CHANGE_DECREASING 0
-#define TEMP_CHANGE_STABLE 1
-#define TEMP_CHANGE_INCREASING 2
-const MembershipFunction tempChangeInputMembershipFunctions[] = {
-    // in degree C per second
-    {-20.0, -20.0, -2.0, 0.0, TRAPEZOIDAL}, // temperature decreasing
-    {-2.0, 0.0, 2.0, 0.0, TRIANGULAR},      // temperature stable
-    {0.0, 2.0, 20.0, 20.0, TRAPEZOIDAL}     // temperature increasing
-};
+#define TempChangeMembershipFunctions(X)                                       \
+    X(TEMP_CHANGE_DECREASING, -20.0, -20.0, -2.0, 0.0, TRAPEZOIDAL)            \
+    X(TEMP_CHANGE_STABLE, -2.0, 0.0, 2.0, 0.0, TRIANGULAR)                     \
+    X(TEMP_CHANGE_INCREASING, 0.0, 2.0, 20.0, 20.0, TRAPEZOIDAL)
+DEFINE_FUZZY_MEMBERSHIP(TempChangeMembershipFunctions)
 
-#define TEC_POWER_LOW 0
-#define TEC_POWER_MEDIUM 1
-#define TEC_POWER_HIGH 2
-const MembershipFunction TECPowerInputMembershipFunctions[] = {
-    // in Watts
-    {-5.0, -5.0, 3.0, 15.0, TRAPEZOIDAL},   // low TEC Power
-    {3.0, 10.0, 25.0, 25.0, TRIANGULAR},    // medium TEC Power
-    {15.0, 25.0, 100.0, 100.0, TRAPEZOIDAL} // high Tec power
-};
+#define TECPowerMembershipFunctions(X)                                         \
+    X(TEC_POWER_LOW, -5.0, -5.0, 3.0, 15.0, TRAPEZOIDAL)                       \
+    X(TEC_POWER_MEDIUM, 3.0, 10.0, 25.0, 25.0, TRIANGULAR)                     \
+    X(TEC_POWER_HIGH, 15.0, 25.0, 100.0, 100.0, TRAPEZOIDAL)
+DEFINE_FUZZY_MEMBERSHIP(TECPowerMembershipFunctions)
 
-#define FAN_STATE_OFF 0
-#define FAN_STATE_ON 1
-const MembershipFunction fanInputMembershipFunctions[] = {
-    // in PWM duty cycle percent
-    {0.0, 20.0, 0.0, 0.0, RECTANGULAR},   // fan off
-    {20.0, 101.0, 0.0, 0.0, RECTANGULAR}, // fan on
-};
+#define FanStateMembershipFunctions(X)                                         \
+    X(FAN_STATE_OFF, 0.0, 20.0, 0.0, 0.0, RECTANGULAR)                         \
+    X(FAN_STATE_ON, 20.0, 101.0, 0.0, 0.0, RECTANGULAR)
+DEFINE_FUZZY_MEMBERSHIP(FanStateMembershipFunctions)
 
-#define FAN_SPEED_OFF 0
-#define FAN_SPEED_SLOW 1
-#define FAN_SPEED_MEDIUM 2
-#define FAN_SPEED_FAST 3
-const MembershipFunction fanSpeedMembershipFunctions[] = {
-    // in PWM duty cycle percent
-    {-20.0, 20.0, 0.0, .0, RECTANGULAR},     // fan off
-    {20.0, 20.0, 40.0, 60.0, TRAPEZOIDAL},   // fan low
-    {30.0, 60.0, 60.0, 65.0, TRAPEZOIDAL},   // fan medium
-    {60.0, 65.0, 100.0, 100.0, TRAPEZOIDAL}, // fan high
-};
+#define FanSpeedMembershipFunctions(X)                                         \
+    X(FAN_SPEED_OFF, -20.0, 20.0, 0.0, 0.0, RECTANGULAR)                       \
+    X(FAN_SPEED_SLOW, 20.0, 20.0, 40.0, 60.0, TRAPEZOIDAL)                     \
+    X(FAN_SPEED_MEDIUM, 30.0, 60.0, 60.0, 65.0, TRAPEZOIDAL)                   \
+    X(FAN_SPEED_FAST, 60.0, 65.0, 100.0, 100.0, TRAPEZOIDAL)
+DEFINE_FUZZY_MEMBERSHIP(FanSpeedMembershipFunctions)
 
 FuzzyRule rules[] = {
     // If fan state is "off" and hot-side temperature is "medium" or "high" or
@@ -143,16 +123,16 @@ FuzzyRule rules[] = {
 
 void createClassifiers() {
     // initilize the input classifiers
-    FuzzySetInit(&TemperatureState, temperatureInputMembershipFunctions,
-                 FUZZY_LENGTH(temperatureInputMembershipFunctions));
-    FuzzySetInit(&TempChangeState, tempChangeInputMembershipFunctions,
-                 FUZZY_LENGTH(tempChangeInputMembershipFunctions));
-    FuzzySetInit(&TECPowerState, TECPowerInputMembershipFunctions,
-                 FUZZY_LENGTH(TECPowerInputMembershipFunctions));
-    FuzzySetInit(&FanState, fanInputMembershipFunctions,
-                 FUZZY_LENGTH(fanInputMembershipFunctions));
-    FuzzySetInit(&FanSpeed, fanSpeedMembershipFunctions,
-                 FUZZY_LENGTH(fanSpeedMembershipFunctions));
+    FuzzySetInit(&TemperatureState, TemperatureMembershipFunctions,
+                 FUZZY_LENGTH(TemperatureMembershipFunctions));
+    FuzzySetInit(&TempChangeState, TempChangeMembershipFunctions,
+                 FUZZY_LENGTH(TempChangeMembershipFunctions));
+    FuzzySetInit(&TECPowerState, TECPowerMembershipFunctions,
+                 FUZZY_LENGTH(TECPowerMembershipFunctions));
+    FuzzySetInit(&FanState, FanStateMembershipFunctions,
+                 FUZZY_LENGTH(FanStateMembershipFunctions));
+    FuzzySetInit(&FanSpeed, FanSpeedMembershipFunctions,
+                 FUZZY_LENGTH(FanSpeedMembershipFunctions));
 }
 
 void destroyClassifiers() {
