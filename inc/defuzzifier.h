@@ -16,6 +16,6 @@
 #include "class.h"
 #include "classifier.h"
 
-double defuzzification(FuzzySet *set);
+double defuzzification(FuzzySet_t *set);
 
 #endif

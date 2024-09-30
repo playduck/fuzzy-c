@@ -18,23 +18,23 @@
 #include <stdlib.h>
 
 /**
- * Initializes a FuzzySet struct.
+ * Initializes a FuzzySet_t struct.
  *
- * This function allocates memory for the membership values in the FuzzySet
+ * This function allocates memory for the membership values in the FuzzySet_t
  * struct.
  *
- * @param set The FuzzySet struct to initialize.
- * @param membershipFunctions The membership functions for this FuzzySet.
+ * @param set The FuzzySet_t struct to initialize.
+ * @param membershipFunctions The membership functions for this FuzzySet_t.
  * @param length The number of membership values and Functions in the set.
  */
-void FuzzySetInit(FuzzySet *set, const MembershipFunction *membershipFunctions,
-                  int length) {
+void FuzzySetInit(FuzzySet_t *set,
+                  const MembershipFunction_t *membershipFunctions, int length) {
 
     set->length = length;
 
     set->membershipValues = (double *)malloc(length * sizeof(double));
     set->membershipFunctions =
-        (MembershipFunction *)malloc(length * sizeof(MembershipFunction));
+        (MembershipFunction_t *)malloc(length * sizeof(MembershipFunction_t));
 
     for (int i = 0; i < length; i++) {
         set->membershipFunctions[i] = membershipFunctions[i];
@@ -42,27 +42,27 @@ void FuzzySetInit(FuzzySet *set, const MembershipFunction *membershipFunctions,
 }
 
 /**
- * Frees the memory allocated for a FuzzySet struct.
+ * Frees the memory allocated for a FuzzySet_t struct.
  *
- * This function should be called when the FuzzySet struct is no longer
+ * This function should be called when the FuzzySet_t struct is no longer
  * needed.
  *
- * @param set The FuzzySet struct to free.
+ * @param set The FuzzySet_t struct to free.
  */
-void FuzzySetFree(FuzzySet *set) {
+void FuzzySetFree(FuzzySet_t *set) {
     free(set->membershipValues);
     free(set->membershipFunctions);
 }
 
 /**
- * Normalizes the membership values in a FuzzySet struct.
+ * Normalizes the membership values in a FuzzySet_t struct.
  *
  * This function calculates the sum of all membership values and divides each
  * membership value by the sum.
  *
- * @param set The FuzzySet struct to normalize.
+ * @param set The FuzzySet_t struct to normalize.
  */
-void normalizeClass(FuzzySet *set) {
+void normalizeClass(FuzzySet_t *set) {
     // Calculate the sum of all membership values
     double sum = 0.0;
     for (int i = 0; i < set->length; i++) {
@@ -85,15 +85,15 @@ void normalizeClass(FuzzySet *set) {
 }
 
 /**
- * Prints the classification results in a FuzzySet struct.
+ * Prints the classification results in a FuzzySet_t struct.
  *
- * This function prints the membership values in a FuzzySet struct along with
+ * This function prints the membership values in a FuzzySet_t struct along with
  * a bar chart representation.
  *
- * @param set The FuzzySet struct to print.
+ * @param set The FuzzySet_t struct to print.
  * @param labels The array of labels to use for the membership values.
  */
-void printClassifier(FuzzySet *set, const char **labels) {
+void printClassifier(FuzzySet_t *set, const char **labels) {
     for (int i = 0; i < set->length; i++) {
         printf("%s", labels[i]);
 

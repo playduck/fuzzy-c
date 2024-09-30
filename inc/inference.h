@@ -21,58 +21,62 @@
 
 // Define a type for a fuzzy variable
 typedef struct {
-    FuzzySet *variable;
+    FuzzySet_t *variable;
     int value;
     bool invert;
-} FuzzyVariable;
+} FuzzyVariable_t;
 
 // Define a type for a fuzzy antecedent
-typedef enum { FUZZY_ANY_OF, FUZZY_ALL_OF } FuzzyOperator;
+typedef enum { FUZZY_ANY_OF, FUZZY_ALL_OF } FuzzyOperator_e;
 
 typedef struct {
-    FuzzyVariable *variables;
+    FuzzyVariable_t *variables;
     int num_variables;
-    FuzzyOperator operator;
-} FuzzyAntecedent;
+    FuzzyOperator_e operator;
+} FuzzyAntecedent_t;
 
 // Define a type for a fuzzy rule
 typedef struct {
-    FuzzyAntecedent *antecedent;
+    FuzzyAntecedent_t *antecedent;
     int num_antecedents;
-    FuzzyVariable consequent;
-} FuzzyRule;
+    FuzzyVariable_t consequent;
+} FuzzyRule_t;
 
 // Define macros to create fuzzy variables and antecedents
 #define NOT(_variable, _value)                                                 \
-    (FuzzyVariable) { .variable = &_variable, .value = _value, .invert = true }
+    (FuzzyVariable_t) {                                                        \
+        .variable = &_variable, .value = _value, .invert = true                \
+    }
 
 #define VAR(_variable, _value)                                                 \
-    (FuzzyVariable) { .variable = &_variable, .value = _value, .invert = false }
+    (FuzzyVariable_t) {                                                        \
+        .variable = &_variable, .value = _value, .invert = false               \
+    }
 
 #define THEN(_variable, _value)                                                \
-    (FuzzyVariable) { .variable = &_variable, .value = _value }
+    (FuzzyVariable_t) { .variable = &_variable, .value = _value }
 
 #define ANY_OF(...)                                                            \
     {.operator= FUZZY_ANY_OF,                                                  \
-     .variables = (FuzzyVariable[]){__VA_ARGS__},                              \
+     .variables = (FuzzyVariable_t[]){__VA_ARGS__},                            \
      .num_variables =                                                          \
-         sizeof((FuzzyVariable[]){__VA_ARGS__}) / sizeof(FuzzyVariable)}
+         sizeof((FuzzyVariable_t[]){__VA_ARGS__}) / sizeof(FuzzyVariable_t)}
 
 #define ALL_OF(...)                                                            \
     {.operator= FUZZY_ALL_OF,                                                  \
-     .variables = (FuzzyVariable[]){__VA_ARGS__},                              \
+     .variables = (FuzzyVariable_t[]){__VA_ARGS__},                            \
      .num_variables =                                                          \
-         sizeof((FuzzyVariable[]){__VA_ARGS__}) / sizeof(FuzzyVariable)}
+         sizeof((FuzzyVariable_t[]){__VA_ARGS__}) / sizeof(FuzzyVariable_t)}
 
 #define WHEN(...) {__VA_ARGS__}
 
 // Define a macro to create a fuzzy rule
 #define PROPOSITION(_antecedent, _consequent)                                  \
-    {.antecedent = (FuzzyAntecedent[])_antecedent,                             \
+    {.antecedent = (FuzzyAntecedent_t[])_antecedent,                           \
      .num_antecedents =                                                        \
-         sizeof((FuzzyAntecedent[])_antecedent) / sizeof(FuzzyAntecedent),     \
+         sizeof((FuzzyAntecedent_t[])_antecedent) / sizeof(FuzzyAntecedent_t), \
      .consequent = _consequent}
 
-void fuzzyInference(const FuzzyRule *rules, int numRules);
+void fuzzyInference(const FuzzyRule_t *rules, int numRules);
 
 #endif

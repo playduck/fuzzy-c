@@ -39,13 +39,13 @@ const char *fanLabels[] = {"Off", "On"};
 const char *fanSpeedLabels[] = {"Off", "Slow", "Medium", "Fast"};
 
 // Define the input fuzzy sets
-FuzzySet TemperatureState;
-FuzzySet TempChangeState;
-FuzzySet TECPowerState;
-FuzzySet FanState;
+FuzzySet_t TemperatureState;
+FuzzySet_t TempChangeState;
+FuzzySet_t TECPowerState;
+FuzzySet_t FanState;
 
 // Define the output fuzzy set
-FuzzySet FanSpeed;
+FuzzySet_t FanSpeed;
 
 // Define the membership functions for the fuzzy sets
 #define TemperatureMembershipFunctions(X)                                      \
@@ -79,7 +79,7 @@ DEFINE_FUZZY_MEMBERSHIP(FanStateMembershipFunctions)
 DEFINE_FUZZY_MEMBERSHIP(FanSpeedMembershipFunctions)
 
 // Define the fuzzy rulesQ
-FuzzyRule rules[] = {
+FuzzyRule_t rules[] = {
     // Rule 1: Turn on the fan at high speed when it's off and the temperature
     // is high or the TEC heat load is high
     PROPOSITION(WHEN(ALL_OF(VAR(FanState, FAN_STATE_OFF)),
@@ -213,14 +213,10 @@ int main(int argc, char *argv[]) {
 
     // Defuzzify the output
     double fanSpeed = defuzzification(&FanSpeed);
-    if (fanSpeed <= 20.0) {
-        // fan won't run below 20, so it's effectively off
-        fanSpeed = 0.0;
-    } else {
-        // extreme points (0, 100) can't be reached due to the centroid
-        // calculation
-        fanSpeed = map_range(fanSpeed, 10.0, 80.0, 30.0, 100.0);
-    }
+    // extreme points (0, 100) can't be reached due to the centroid
+    // calculation
+    fanSpeed = map_range(fanSpeed, 10.0, 80.0, 0.0, 100.0);
+
 
     // Print the result
     printf("Fan Speed: %.04f %%\n", fanSpeed);

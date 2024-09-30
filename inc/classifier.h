@@ -15,6 +15,6 @@
 
 #include "class.h"
 
-void FuzzyClassifier(double x, FuzzySet *set);
+void FuzzyClassifier(double x, FuzzySet_t *set);
 
 #endif

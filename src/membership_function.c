@@ -106,20 +106,20 @@ double rectangularMembershipFunction(double x, double a, double b) {
 /**
  * Calculates the membership degree of a generic membership function.
  *
- * This function takes an input x and a MembershipFunction struct as arguments.
- * The MembershipFunction struct is not defined in this code snippet, but it is
- * assumed to have a type field that indicates the type of membership function
- * to use (either TRIANGULAR or TRAPEZOIDAL) and fields a, b, c, and d that
- * represent the parameters of the membership function.
+ * This function takes an input x and a MembershipFunction_t struct as
+ * arguments. The MembershipFunction_t struct is not defined in this code
+ * snippet, but it is assumed to have a type field that indicates the type of
+ * membership function to use (either TRIANGULAR or TRAPEZOIDAL) and fields a,
+ * b, c, and d that represent the parameters of the membership function.
  *
  * @param x The input value to calculate the membership degree for.
- * @param mf The MembershipFunction struct that defines the membership
+ * @param mf The MembershipFunction_t struct that defines the membership
  * function.
  * @return The membership degree of the input value.
  */
-double membershipFunction(double x, MembershipFunction mf) {
+double membershipFunction(double x, MembershipFunction_t mf) {
     // Use a switch statement to determine which membership function to use
-    // based on the type field of the MembershipFunction struct
+    // based on the type field of the MembershipFunction_t struct
     switch (mf.type) {
     case TRIANGULAR:
         // Call the triangular membership function with the input x and the

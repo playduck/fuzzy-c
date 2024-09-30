@@ -23,7 +23,7 @@
  * @param membership The membership value of the function.
  * @return The centroid of the triangular membership function.
  */
-double calculateTriangularCentroid(MembershipFunction function,
+double calculateTriangularCentroid(MembershipFunction_t function,
                                    double membership) {
     double a = function.a;
     double b = function.b;
@@ -53,7 +53,7 @@ double calculateTriangularCentroid(MembershipFunction function,
  * @param membership The membership value of the function.
  * @return The centroid of the trapezoidal membership function.
  */
-double calculateTrapezoidalCentroid(MembershipFunction function,
+double calculateTrapezoidalCentroid(MembershipFunction_t function,
                                     double membership) {
     double a = function.a;
     double b = function.b;
@@ -80,7 +80,7 @@ double calculateTrapezoidalCentroid(MembershipFunction function,
  * @param membership The membership value of the function.
  * @return The centroid of the rectangular membership function.
  */
-double calculateRectangularCentroid(MembershipFunction function,
+double calculateRectangularCentroid(MembershipFunction_t function,
                                     double membership) {
     double a = function.a;
     double b = function.b;
@@ -100,7 +100,7 @@ double calculateRectangularCentroid(MembershipFunction function,
  * @param membership The membership value of the function.
  * @return The centroid of the membership function.
  */
-double calculateCentroid(MembershipFunction function, double membership) {
+double calculateCentroid(MembershipFunction_t function, double membership) {
     switch (function.type) {
     case TRIANGULAR:
         return calculateTriangularCentroid(function, membership);
@@ -120,7 +120,7 @@ double calculateCentroid(MembershipFunction function, double membership) {
  * @param set The FuzzzySet to calculate the centroid for.
  * @return The centroid of the fuzzy class.
  */
-double defuzzification(FuzzySet *set) {
+double defuzzification(FuzzySet_t *set) {
     double sum = 0.0;
     double sumOfMemberships = 0.0;
 

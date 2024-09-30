@@ -2,7 +2,7 @@ import subprocess
 import numpy as np
 import matplotlib.pyplot as plt
 
-RESOLUTION = 20
+RESOLUTION = 50
 # Define the ranges for the input parameters
 TEMPERATURE_RANGE = np.linspace(10, 45, RESOLUTION)
 TEMPERATURE_CHANGE_RANGE = np.linspace(-1, 1, RESOLUTION)

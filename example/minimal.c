@@ -28,8 +28,8 @@
 #include <time.h>
 
 // Define the fuzzy sets for the input and output
-FuzzySet Input;
-FuzzySet Output;
+FuzzySet_t Input;
+FuzzySet_t Output;
 
 // Define labels for printing the fuzzy sets (only for debugging)
 const char *labels[] = {"Low", "Mid", "High"};
@@ -49,7 +49,7 @@ DEFINE_FUZZY_MEMBERSHIP(InputMembershipFunctions)
 DEFINE_FUZZY_MEMBERSHIP(OutputMembershipFunctions)
 
 // Define the fuzzy rules
-FuzzyRule rules[] = {
+FuzzyRule_t rules[] = {
     // If the input is low, then the output is high
     PROPOSITION(WHEN(ALL_OF(VAR(Input, INPUT_LOW))), THEN(Output, OUTPUT_HIGH)),
 

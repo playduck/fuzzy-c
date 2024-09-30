@@ -30,7 +30,7 @@
  * @param rules An array of fuzzy rules.
  * @param numRules The number of fuzzy rules in the array.
  */
-void fuzzyInference(const FuzzyRule *rules, int numRules) {
+void fuzzyInference(const FuzzyRule_t *rules, int numRules) {
     // Initialize the output memberships of the consequent to 0
     for (int i = 0; i < numRules; i++) {
         rules[i]
@@ -40,14 +40,14 @@ void fuzzyInference(const FuzzyRule *rules, int numRules) {
 
     // Iterate over each rule
     for (int i = 0; i < numRules; i++) {
-        const FuzzyRule *rule = &rules[i];
+        const FuzzyRule_t *rule = &rules[i];
 
         // Calculate the membership of the inputs
         double membership = 1.0; // Initialize membership to 1.0 (maximum)
 
         // Iterate over each antecedent in the rule
         for (int j = 0; j < rule->num_antecedents; j++) {
-            const FuzzyAntecedent *antecedent = &rule->antecedent[j];
+            const FuzzyAntecedent_t *antecedent = &rule->antecedent[j];
 
             // Check if the antecedent is an ANY_OF operator
             if (antecedent->operator== FUZZY_ANY_OF) {

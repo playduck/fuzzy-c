@@ -17,16 +17,16 @@
 
 typedef struct {
     double *membershipValues;
-    MembershipFunction *membershipFunctions;
+    MembershipFunction_t *membershipFunctions;
     int length;
-} FuzzySet;
+} FuzzySet_t;
 
-void FuzzySetInit(FuzzySet *set, const MembershipFunction *membershipFunctions,
-                  int length);
-void FuzzySetFree(FuzzySet *set);
+void FuzzySetInit(FuzzySet_t *set,
+                  const MembershipFunction_t *membershipFunctions, int length);
+void FuzzySetFree(FuzzySet_t *set);
 
-void normalizeClass(FuzzySet *set);
+void normalizeClass(FuzzySet_t *set);
 
-void printClassifier(FuzzySet *set, const char **labels);
+void printClassifier(FuzzySet_t *set, const char **labels);
 
 #endif
