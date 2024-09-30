@@ -9,15 +9,15 @@
  *
  */
 
-#ifndef FUZZY_INFERENCE_H
-#define FUZZY_INFERENCE_H
-#pragma once
-
 #include "class.h"
 #include "classifier.h"
 #include "membership_function.h"
 
 #include <stdbool.h>
+
+#ifndef FUZZY_INFERENCE_H
+#define FUZZY_INFERENCE_H
+#pragma once
 
 // Define a type for a fuzzy variable
 typedef struct {
@@ -27,12 +27,12 @@ typedef struct {
 } FuzzyVariable_t;
 
 // Define a type for a fuzzy antecedent
-typedef enum { FUZZY_ANY_OF, FUZZY_ALL_OF } FuzzyOperator_e;
+typedef enum { FUZZY_ANY_OF, FUZZY_ALL_OF } Fuzzyfuzzy_operator_e;
 
 typedef struct {
     FuzzyVariable_t *variables;
     int num_variables;
-    FuzzyOperator_e operator;
+    Fuzzyfuzzy_operator_e fuzzy_operator;
 } FuzzyAntecedent_t;
 
 // Define a type for a fuzzy rule
@@ -57,13 +57,13 @@ typedef struct {
     (FuzzyVariable_t) { .variable = &_variable, .value = _value }
 
 #define ANY_OF(...)                                                            \
-    {.operator= FUZZY_ANY_OF,                                                  \
+    {.fuzzy_operator= FUZZY_ANY_OF,                                                  \
      .variables = (FuzzyVariable_t[]){__VA_ARGS__},                            \
      .num_variables =                                                          \
          sizeof((FuzzyVariable_t[]){__VA_ARGS__}) / sizeof(FuzzyVariable_t)}
 
 #define ALL_OF(...)                                                            \
-    {.operator= FUZZY_ALL_OF,                                                  \
+    {.fuzzy_operator= FUZZY_ALL_OF,                                                  \
      .variables = (FuzzyVariable_t[]){__VA_ARGS__},                            \
      .num_variables =                                                          \
          sizeof((FuzzyVariable_t[]){__VA_ARGS__}) / sizeof(FuzzyVariable_t)}

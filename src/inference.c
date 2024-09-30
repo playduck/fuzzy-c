@@ -49,10 +49,10 @@ void fuzzyInference(const FuzzyRule_t *rules, int numRules) {
         for (int j = 0; j < rule->num_antecedents; j++) {
             const FuzzyAntecedent_t *antecedent = &rule->antecedent[j];
 
-            // Check if the antecedent is an ANY_OF operator
-            if (antecedent->operator== FUZZY_ANY_OF) {
+            // Check if the antecedent is an ANY_OF fuzzy_operator
+            if (antecedent->fuzzy_operator== FUZZY_ANY_OF) {
                 // Calculate the maximum membership of the variables in the
-                // ANY_OF operator
+                // ANY_OF fuzzy_operator
                 double orMembership = 0.0;
                 for (int k = 0; k < antecedent->num_variables; k++) {
                     double inputMembership;
@@ -77,16 +77,16 @@ void fuzzyInference(const FuzzyRule_t *rules, int numRules) {
                     }
 
                     // Update the maximum membership of the variables in the
-                    // ANY_OF operator
+                    // ANY_OF fuzzy_operator
                     orMembership = fmax(orMembership, inputMembership);
                 }
 
                 // Update the membership with the minimum of the current
                 // membership and the ANY_OF membership
                 membership = fmin(membership, orMembership);
-            } else if (antecedent->operator== FUZZY_ALL_OF) {
+            } else if (antecedent->fuzzy_operator== FUZZY_ALL_OF) {
                 // Calculate the minimum membership of the variables in the
-                // ALL_OF operator
+                // ALL_OF fuzzy_operator
                 double andMembership = 1.0;
                 for (int k = 0; k < antecedent->num_variables; k++) {
                     double inputMembership;
@@ -111,7 +111,7 @@ void fuzzyInference(const FuzzyRule_t *rules, int numRules) {
                     }
 
                     // Update the minimum membership of the variables in the
-                    // ALL_OF operator
+                    // ALL_OF fuzzy_operator
                     andMembership = fmin(andMembership, inputMembership);
                 }
 
