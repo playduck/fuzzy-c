@@ -42,63 +42,99 @@ void fuzzyInference(const FuzzyRule *rules, int numRules) {
         const FuzzyRule *rule = &rules[i];
 
         // Calculate the membership of the inputs
-        double membership = 1.0;
-        double orMembership = 0.0;
-        bool isOrOperator = false;
+        double membership = 1.0; // Initialize membership to 1.0 (maximum)
 
+        // Iterate over each antecedent in the rule
         for (int j = 0; j < rule->num_antecedents; j++) {
-            printf("Processing antecedent %d of rule %d...\n", j, i);
-            FuzzyAntecedent *antecedent = &rule->antecedents[j];
+            const FuzzyAntecedent *antecedent = &rule->antecedent[j];
 
-            if (j % 2 == 0) {
-                // This is a variable
-                printf("Variable: %p, value: %d\n",
-                       antecedent->variable.variable,
-                       antecedent->variable.value);
-                double inputMembership =
-                    antecedent->variable.variable
-                        ->memberships[antecedent->variable.value];
+            // Check if the antecedent is an ANY_OF operator
+            if (antecedent->operator== FUZZY_ANY_OF) {
+                // Calculate the maximum membership of the variables in the
+                // ANY_OF operator
+                double orMembership = 0.0;
+                for (int k = 0; k < antecedent->num_variables; k++) {
+                    double inputMembership;
 
-                printf("Membership: %f\n", inputMembership);
-                if (isOrOperator) {
-                    orMembership = fmax(orMembership, inputMembership);
-                } else {
-                    membership = fmin(membership, inputMembership);
-                }
-            } else {
-                // This is an operator
-                printf("Operator: %d\n", antecedent->operator);
-                if (antecedent->operator== FUZZY_OR) {
-                    // Use OR operation
-                    isOrOperator = true;
-                } else {
-                    isOrOperator = false;
-                    if (orMembership > 0.0) {
-                        membership = fmax(membership, orMembership);
+                    // Check if the variable is inverted (i.e., NOT() macro is
+                    // used)
+                    if (antecedent->variables[k].invert) {
+                        // If the variable is inverted, calculate the membership
+                        // of the complement (i.e., 1 - membership) This is
+                        // because the NOT() macro inverts the membership of the
+                        // variable
+                        inputMembership =
+                            1.0 -
+                            antecedent->variables[k]
+                                .variable
+                                ->memberships[antecedent->variables[k].value];
+                    } else {
+                        // If the variable is not inverted, calculate the
+                        // membership as usual
+                        inputMembership =
+                            antecedent->variables[k]
+                                .variable
+                                ->memberships[antecedent->variables[k].value];
                     }
-                    orMembership = 0.0;
+
+                    // Update the maximum membership of the variables in the
+                    // ANY_OF operator
+                    orMembership = fmax(orMembership, inputMembership);
                 }
+
+                // Update the membership with the minimum of the current
+                // membership and the ANY_OF membership
+                membership = fmin(membership, orMembership);
+            } else if (antecedent->operator== FUZZY_ALL_OF) {
+                // Calculate the minimum membership of the variables in the
+                // ALL_OF operator
+                double andMembership = 1.0;
+                for (int k = 0; k < antecedent->num_variables; k++) {
+                    double inputMembership;
+
+                    // Check if the variable is inverted (i.e., NOT() macro is
+                    // used)
+                    if (antecedent->variables[k].invert) {
+                        // If the variable is inverted, calculate the membership
+                        // of the complement (i.e., 1 - membership) This is
+                        // because the NOT() macro inverts the membership of the
+                        // variable
+                        inputMembership =
+                            1.0 -
+                            antecedent->variables[k]
+                                .variable
+                                ->memberships[antecedent->variables[k].value];
+                    } else {
+                        // If the variable is not inverted, calculate the
+                        // membership as usual
+                        inputMembership =
+                            antecedent->variables[k]
+                                .variable
+                                ->memberships[antecedent->variables[k].value];
+                    }
+
+                    // Update the minimum membership of the variables in the
+                    // ALL_OF operator
+                    andMembership = fmin(andMembership, inputMembership);
+                }
+
+                // Update the membership with the minimum of the current
+                // membership and the ALL_OF membership
+                membership = fmin(membership, andMembership);
             }
         }
 
-        // Apply the final membership to the output
-        if (orMembership > 0.0) {
-            membership = fmax(membership, orMembership);
-        }
-
-        // add the membership to the output
-        printf("Output variable: %p, value: %d\n", rule->consequent.variable,
-               rule->consequent.value);
-        rule->consequent.variable->memberships[rule->consequent.value] =
-            fmax(rule->consequent.variable->memberships[rule->consequent.value],
+        // Update the output membership with the maximum of the current
+        // membership and the calculated membership
+        rules[i].consequent.variable->memberships[rules[i].consequent.value] =
+            fmax(rules[i]
+                     .consequent.variable
+                     ->memberships[rules[i].consequent.value],
                  membership);
-        printf("Membership: %f\n",
-               rule->consequent.variable->memberships[rule->consequent.value]);
     }
 
     // Normalize the output membership
     for (int i = 0; i < numRules; i++) {
-        printf("Normalizing rule %d...\n", i);
         normalizeClass(rules[i].consequent.variable);
     }
 }

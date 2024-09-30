@@ -17,44 +17,61 @@
 #include "classifier.h"
 #include "membership_function.h"
 
+#include <stdbool.h>
+
 // Define a type for a fuzzy variable
 typedef struct {
     FuzzyClass *variable;
     int value;
+    bool invert;
 } FuzzyVariable;
 
 // Define a type for a fuzzy antecedent
-typedef enum { FUZZY_AND, FUZZY_OR } FuzzyOperator;
+typedef enum { FUZZY_ANY_OF, FUZZY_ALL_OF } FuzzyOperator;
 
-typedef union {
-    FuzzyVariable variable;
+typedef struct {
+    FuzzyVariable *variables;
+    int num_variables;
     FuzzyOperator operator;
 } FuzzyAntecedent;
 
 // Define a type for a fuzzy rule
 typedef struct {
-    FuzzyAntecedent *antecedents;
+    FuzzyAntecedent *antecedent;
     int num_antecedents;
     FuzzyVariable consequent;
 } FuzzyRule;
 
 // Define macros to create fuzzy variables and antecedents
+#define NOT(_variable, _value)                                                 \
+    (FuzzyVariable) { .variable = &_variable, .value = _value, .invert = true }
+
 #define VAR(_variable, _value)                                                 \
-    {                                                                          \
-        .variable = {.variable = _variable, .value = _value }                  \
-    }
-#define AND {.operator= FUZZY_AND}
-#define OR {.operator= FUZZY_OR}
-#define WHEN(...)                                                              \
-    .antecedents = (FuzzyAntecedent[]){__VA_ARGS__},                           \
-    .num_antecedents =                                                         \
-        sizeof((FuzzyAntecedent[]){__VA_ARGS__}) / sizeof(FuzzyAntecedent)
+    (FuzzyVariable) { .variable = &_variable, .value = _value, .invert = false }
 
 #define THEN(_variable, _value)                                                \
-    .consequent = (FuzzyVariable) { .variable = _variable, .value = _value }
+    (FuzzyVariable) { .variable = &_variable, .value = _value }
+
+#define ANY_OF(...)                                                            \
+    {.operator= FUZZY_ANY_OF,                                                  \
+     .variables = (FuzzyVariable[]){__VA_ARGS__},                              \
+     .num_variables =                                                          \
+         sizeof((FuzzyVariable[]){__VA_ARGS__}) / sizeof(FuzzyVariable)}
+
+#define ALL_OF(...)                                                            \
+    {.operator= FUZZY_ALL_OF,                                                  \
+     .variables = (FuzzyVariable[]){__VA_ARGS__},                              \
+     .num_variables =                                                          \
+         sizeof((FuzzyVariable[]){__VA_ARGS__}) / sizeof(FuzzyVariable)}
+
+#define WHEN(...) {__VA_ARGS__}
 
 // Define a macro to create a fuzzy rule
-#define PROPOSITION(antecedents, consequent) {antecedents, consequent}
+#define PROPOSITION(_antecedent, _consequent)                                  \
+    {.antecedent = (FuzzyAntecedent[])_antecedent,                             \
+     .num_antecedents =                                                        \
+         sizeof((FuzzyAntecedent[])_antecedent) / sizeof(FuzzyAntecedent),     \
+     .consequent = _consequent}
 
 void fuzzyInference(const FuzzyRule *rules, int numRules);
 
