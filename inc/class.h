@@ -27,6 +27,10 @@ void FuzzySetFree(FuzzySet_t *set);
 
 void normalizeClass(FuzzySet_t *set);
 
+double getMaxOutput(FuzzySet_t *set);
+
+double getMinOutput(FuzzySet_t *set);
+
 void printClassifier(FuzzySet_t *set, const char **labels);
 
 #endif

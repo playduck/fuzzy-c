@@ -35,17 +35,21 @@ FuzzySet_t Output;
 const char *labels[] = {"Low", "Mid", "High"};
 
 // Define the membership functions for the input fuzzy set
+// Keep edge-case inputs values in mind, they might need to be shifted by one
 #define InputMembershipFunctions(X)                                            \
-    X(INPUT_LOW, 0.0, 0.0, 15.0, 40.0, TRAPEZOIDAL)                            \
+    X(INPUT_LOW, -1.0, -1.0, 15.0, 40.0, TRAPEZOIDAL)                          \
     X(INPUT_MEDIUM, 15.0, 40.0, 60.0, 80.0, TRAPEZOIDAL)                       \
-    X(INPUT_HIGH, 60.0, 80.0, 100.0, 100.0, TRAPEZOIDAL)
+    X(INPUT_HIGH, 60.0, 80.0, 101.0, 101.0, TRAPEZOIDAL)
 DEFINE_FUZZY_MEMBERSHIP(InputMembershipFunctions)
 
 // Define the membership functions for the output fuzzy set
+// The output range is based on cenroids, to define a range (here 0 to 100) the
+// shapes may need to extend past it (e.g. the first trapezoid goes all the way
+// to -40, such that its centroid can be at 0)
 #define OutputMembershipFunctions(X)                                           \
-    X(OUTPUT_LOW, 00.0, 0.0, 30.0, 50.0, TRAPEZOIDAL)                          \
+    X(OUTPUT_LOW, -40.0, -40.0, 30.0, 50.0, TRAPEZOIDAL)                       \
     X(OUTPUT_MEDIUM, 30.0, 50.0, 70.0, 0.0, TRIANGULAR)                        \
-    X(OUTPUT_HIGH, 50.0, 70.0, 100.0, 100.0, TRAPEZOIDAL)
+    X(OUTPUT_HIGH, 50.0, 70.0, 140.0, 140.0, TRAPEZOIDAL)
 DEFINE_FUZZY_MEMBERSHIP(OutputMembershipFunctions)
 
 // Define the fuzzy rules
@@ -77,6 +81,10 @@ int main(int argc, char *argv[]) {
                  FUZZY_LENGTH(InputMembershipFunctions));
     FuzzySetInit(&Output, OutputMembershipFunctions,
                  FUZZY_LENGTH(OutputMembershipFunctions));
+
+    // Print the possible output range
+    printf("Possible Output range: %f - %f\n", getMinOutput(&Output),
+           getMaxOutput(&Output));
 
     // Classify the input into a fuzzy state
     FuzzyClassifier(input_x, &Input);
